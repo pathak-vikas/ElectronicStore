@@ -1,12 +1,18 @@
 package com.vikas.ElectronicStore.services.Impl;
 
+import com.vikas.ElectronicStore.dtos.PageableResponse;
 import com.vikas.ElectronicStore.dtos.UserDTO;
 import com.vikas.ElectronicStore.entities.User;
 import com.vikas.ElectronicStore.exceptions.ResourceNotFoundException;
+import com.vikas.ElectronicStore.helper.Helper;
 import com.vikas.ElectronicStore.repositories.UserRepository;
 import com.vikas.ElectronicStore.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,10 +65,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        List<UserDTO> dtoList = users.stream().map(user -> entityToDto(user)).collect(Collectors.toList());
-        return dtoList;
+    public PageableResponse<UserDTO> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortDir) {
+
+        Sort sort = (sortDir.equalsIgnoreCase( "desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
+        //pageNumber default starts from 0
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<User> page = userRepository.findAll(pageable);
+        PageableResponse<UserDTO> response = Helper.getPageableResponse(page, UserDTO.class);
+        return response;
     }
 
     @Override

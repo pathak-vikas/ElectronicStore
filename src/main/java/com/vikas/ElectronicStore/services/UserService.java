@@ -1,7 +1,9 @@
 package com.vikas.ElectronicStore.services;
 
+import com.vikas.ElectronicStore.dtos.PageableResponse;
 import com.vikas.ElectronicStore.dtos.UserDTO;
 import com.vikas.ElectronicStore.entities.User;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -18,7 +20,7 @@ public interface UserService {
     void deleteUser(String userId);
 
     //get all users
-    List<UserDTO> getAllUsers();
+    PageableResponse<UserDTO> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortDir);
 
     //get single user by id
     UserDTO getUserById(String userId);
