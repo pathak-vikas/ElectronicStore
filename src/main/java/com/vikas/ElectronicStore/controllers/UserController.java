@@ -4,6 +4,7 @@ package com.vikas.ElectronicStore.controllers;
 import com.vikas.ElectronicStore.dtos.ApiResponseMessage;
 import com.vikas.ElectronicStore.dtos.UserDTO;
 import com.vikas.ElectronicStore.services.UserService;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class UserController {
     //create
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO){
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO){
             UserDTO userDTO1 = userService.createUser(userDTO);
             return new ResponseEntity<>(userDTO1, HttpStatus.CREATED);
     }
@@ -31,7 +32,7 @@ public class UserController {
     @PutMapping("/{userId}")
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable("userId") String userId,
-            @RequestBody UserDTO userDTO
+            @Valid @RequestBody UserDTO userDTO
     ){
         UserDTO updatedUserDto = userService.updateUser(userDTO, userId);
         return new ResponseEntity<>(updatedUserDto, HttpStatus.OK);
@@ -74,7 +75,7 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserByEmail(emailId), HttpStatus.OK);
     }
 
-    //search user email
+    //search user name keywords
     @GetMapping("/search/{keywords}")
     public ResponseEntity<List<UserDTO>> searchUser(
             @PathVariable String keywords
