@@ -2,6 +2,7 @@ package com.vikas.ElectronicStore.services.Impl;
 
 import com.vikas.ElectronicStore.dtos.UserDTO;
 import com.vikas.ElectronicStore.entities.User;
+import com.vikas.ElectronicStore.exceptions.ResourceNotFoundException;
 import com.vikas.ElectronicStore.repositories.UserRepository;
 import com.vikas.ElectronicStore.services.UserService;
 import org.modelmapper.ModelMapper;
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO updateUser(UserDTO userDTO, String userId) {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with given id"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with given id"));
         user.setName(userDTO.getName());
         //email update if requirement is there
         user.setAbout(userDTO.getAbout());
@@ -52,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(String userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with given id"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with given id"));
         //delete user
         userRepository.delete(user);
     }
@@ -66,14 +67,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserById(String userId) {
-        User fetchedUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with given id"));
+        User fetchedUser = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with given id"));
         UserDTO fetchedUserDTO = entityToDto(fetchedUser);
         return fetchedUserDTO;
     }
 
     @Override
     public UserDTO getUserByEmail(String email) {
-        User fetchedUser = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found with given id"));
+        User fetchedUser = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found with given Email"));
         UserDTO fetchedUserDTO = entityToDto(fetchedUser);
         return fetchedUserDTO;
     }
