@@ -36,6 +36,6 @@ public class UserDTO {
 
     //@Pattern
     //@Custom Validator
-    @ImageNameValid()
+    //@ImageNameValid()
     private String imageNameUrl;
 }
