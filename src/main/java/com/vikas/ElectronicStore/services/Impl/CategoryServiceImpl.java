@@ -2,7 +2,9 @@ package com.vikas.ElectronicStore.services.Impl;
 
 import com.vikas.ElectronicStore.dtos.CategoryDTO;
 import com.vikas.ElectronicStore.dtos.PageableResponse;
+import com.vikas.ElectronicStore.dtos.UserDTO;
 import com.vikas.ElectronicStore.entities.Category;
+import com.vikas.ElectronicStore.entities.User;
 import com.vikas.ElectronicStore.exceptions.ResourceNotFoundException;
 import com.vikas.ElectronicStore.helper.Helper;
 import com.vikas.ElectronicStore.repositories.CategoryRepository;
@@ -16,6 +18,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
@@ -27,10 +34,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO create(CategoryDTO categoryDTO) {
+
+
+        // generate unique id in string format
+        String categoryId = UUID.randomUUID().toString();
+        categoryDTO.setCategoryId(categoryId);
         //dto to entity mapper
         Category category =  modelMapper.map(categoryDTO, Category.class);
-       Category savedCategory =  categoryRepository.save(category);
-
+        Category savedCategory =  categoryRepository.save(category);
+        //entity -> dto
         return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 
@@ -69,5 +81,15 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDTO get(String categoryId) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found "));
         return modelMapper.map(category, CategoryDTO.class);
+    }
+
+    @Override
+    public List<CategoryDTO> searchCategory(String keyword) {
+        List<Category> categories = categoryRepository.findByTitleContaining(keyword);
+        List<CategoryDTO> dtoList = categories.stream().map(category -> entityToDto(category)).collect(Collectors.toList());
+        return dtoList;
+    }
+    private CategoryDTO entityToDto(Category saveCategory) {
+        return modelMapper.map(saveCategory, CategoryDTO.class);
     }
 }
